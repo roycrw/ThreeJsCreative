@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+    </style>
+</head>
+<body>
+
+
+<script>
+    // Our Javascript will go here.
+    // only works in nodeJs enviorments.
+//    var THREE = require('three');
+//    var scene = new THREE.Scene();
+
+    // 导入全部模块的话
+    import * as THREE from '../build/three.js';
+    var scene = new THREE.Scene();
+
+    // 导入部分模块的话
+    // 如果不支持的话，就要切换到 ES6 的模式
+    import {Scene} from '../build/three.js'
+    const scene = new Scene();
+
+</script>
+</body>
+</html>

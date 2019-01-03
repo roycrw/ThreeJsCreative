@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>geometries</title>
+    <style>
+        body {
+            color: #eee;
+            font-family:Monospace;
+            font-size:13px;
+            text-align:center;
+
+            background-color: #000;
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+    </style>
+</head>
+<body>
+
+
+<script src="../build/three.js"></script>
+<!-- 为啥还要引用其他的 WebGl.js，搞不懂这个含义是什么了 -->
+<!-- 额外引用的 webGl 文件提供了一系列功能，包括检查是否浏览器支持 webGl -->
+
+<script>
+    // Our Javascript will go here.
+
+    // 定义主要的 场景、 摄像机、 渲染器。
+    var camera, scene, renderer;
+
+    init();
+    animate();
+
+    function init() {
+
+        // 保持规范。 保持空格. 保持格式的情况下， 一开始的编程速度就会慢下来。
+        scene = new THREE.Scene();
+
+//        致命错误！！！！！！！，参数是摄像头的屏宽比！！！！！! 摄像头屏幕设置的比例不对会改变物体的所有尺寸了！！！
+        camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.01, 2000 );
+        camera.position.z = 400;
+
+
+        var object;
+
+//       定义一束环境光 / 均匀光, 参数是颜色 和 环境光强度。
+        var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.5 );
+        scene.add( ambientLight );
+
+//       定义一束点光， 需要绑定到摄像头上面。参数时 颜色和 光强
+//        然后添加摄像头
+//        var pointLight = new THREE.PointLight( 0xffffff, 0.8 );
+//        camera.add( pointLight );
+//        scene.add( camera );
+
+//         加载素材, load 方法返回 一个 素材。
+//         wrapS 和 wrapT 分别定义了其在水平方向和垂直方向如何进行包裹。
+//         anisotropy 设置高，会使得素材更加清晰，也就是更加多的像素。
+        var map = new THREE.TextureLoader().load( '../resources/textures/UV_Grid_Sm.jpg' );
+        map.wrapS = map.wrapT = THREE.RepeatWrapping;
+        map.anisotropy = 16;
+
+//          定义材质
+//         meshphongMaterial 是一种镜面高光泽的材质。
+        var material = new THREE.MeshPhongMaterial( { map: map, side: THREE.DoubleSide } );
+
+//         开始定义物体。 其中的结构是直接定义使用了！
+//         定义的是 球形 缓冲 几何体。 带有棱的球形几何体。 参数是 球体半径，水平分段数， 垂直分段数。
+        object = new THREE.Mesh( new THREE.SphereBufferGeometry( 75, 20, 10 ), material );
+        object.position.set( - 300, 0, 200 );
+        scene.add( object );
+
+//         定义二十面 缓冲 几何体, 参数是 球体半径 和 棱的数量。
+        object = new THREE.Mesh( new THREE.IcosahedronBufferGeometry( 75, 0 ), material );
+        object.position.set( - 100, 0, 200 );
+        scene.add( object );
+
+//        定义八面 缓冲 几何体。 参数是 球体半径 和 棱的数量。
+        object = new THREE.Mesh( new THREE.OctahedronBufferGeometry( 75, 0 ), material );
+        object.position.set( 100, 0, 200 );
+        scene.add( object );
+
+//        定义四面 缓冲 几何体。
+        object = new THREE.Mesh( new THREE.TetrahedronBufferGeometry( 75, 0 ), material );
+        object.position.set( 300, 0, 200 );
+        scene.add( object );
+
+//        先定义这几种吧！
+
+//        定义渲染器
+//        renderer = new THREE.WebGLRenderer( { antialias: true } );
+        renderer = new THREE.WebGLRenderer();
+//        renderer.setPixelRatio( window.devicePixelRatio );
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+
+    }
+
+    function animate() {
+
+        requestAnimationFrame( animate );
+
+        render();
+
+    }
+
+    function render() {
+
+        var timer = Date.now() * 0.0001;
+
+//        摄像头进行公转 移动。
+        camera.position.x = Math.cos( timer ) * 800;
+        camera.position.y = Math.sin( timer ) * 800;
+
+//        摄像头对准场景
+        camera.lookAt( scene.position );
+
+//        对每一个子对象 都会调用一次函数。 参数为子对象。
+        scene.traverse( function ( object ) {
+
+            if( object.isMesh === true ) {
+
+                object.rotation.x = timer * 5;
+                object.rotation.y = timer * 2.5;
+
+            }
+
+        } );
+
+//        渲染镜头。
+        renderer.render( scene, camera );
+
+    }
+
+</script>
+</body>
+</html>
