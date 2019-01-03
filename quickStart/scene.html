@@ -20,7 +20,59 @@
 <script src="../build/three.js"></script>
 <script>
     // Our Javascript will go here.
-    
+    // 创建一个场景， 防止 命名空间混乱。
+    var scene = new THREE.Scene();
+    // 创建一个透视相机， 参数： 视野角度，摄像机的长宽比，摄像机视锥体近端面，摄像机视锥体远端面。
+    // 后二者大概是一种比例关系，分别代表四棱锥截取不同部分的平面。
+    // 近的截出来面就是 front clipping plane , 远的截出来面就是 far clipping plane.
+    // 接下来的两个值是远剪切面和近剪切面。 也就是说当物体所在的位置比摄像机的远剪切面远或者所在位置比近剪切面近的时候，
+    // 该物体超出的部分将不会被渲染到场景中。现在你或许并不用担心这个值的影响，但未来为了获得更好的渲染性能，
+    // 你将可以在你的应用程序里去设置它。
+    // 可以简单的理解为在 你的视野范围之内的意思。 指在视锥体之内。
+    var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    // 场景在视锥体内（即摄像机内），然后通过渲染器进行渲染的结果。
+    var renderer = new THREE.WebGLRenderer();
+    // 渲染器根据浏览器的技术而定，如果不支持webGl ，那么可以降低渲染器。
+    // 同时渲染器是设定尺寸的。
+    // 设置渲染器的尺寸。
+    // 对于性能比较敏感的应用程序来说，你可以给setSize传入一个较小的值，例如window.innerWidth/2和window.innerHeight/2，
+    // 这将使得应用程序在渲染时，以一半的长宽尺寸渲染场景。 意思就是 像素点可以少一点，性能要求不会太高。
+    renderer.setSize(window.innerWidth-200, window.innerHeight-100);
+    // domElement 是一个 canvas，渲染器在上面绘制输出。
+    // 将 domElement 加入到我们的 HTML 之中。
+    document.body.appendChild(renderer.domElement);
+
+    // 创建正方体的原始几何类。 物体结构
+    // 这个对象中包含了 一个立方体中所有的 顶点-vertices 和 面-faces 。
+    var geometry = new THREE.BoxGeometry(1,1,1);
+    // 创建基础网格材质，这种才材质不受光照影响。 MeshBasicMaterial。 物体材质
+    var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+    // 基于三角形为 polygon mesh（多边形网格）物体的类。也是其他某些类的基类。
+    // 创建物体的类。 参数是 物体结构 和 物体材质。
+    var cube = new THREE.Mesh(geometry, material);
+
+    // 在场景里添加物体类。
+    // 默认情况下，物体将会添加到原点位置。 此时和摄像机的位置重叠了， 所以要把摄像机稍微移动出去一些。
+    scene.add(cube);
+    camera.position.z = 5;
+
+    // 此时，场景和摄像机都已经有了物体，内容。
+    // 但是还需要对它们进行真正的渲染。
+    // 这里可以设置每一帧动画的渲染。
+    // 正常渲染频率是 （正常情况下是60次/秒）。
+    function animate(){
+        requestAnimationFrame(animate);
+        // 用相机渲染一个场景。
+        // 另外两个参数，决定canvas/rendertarget 和 forceclear 颜色、深度等是否清除.
+        renderer.render(scene, camera);
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+
+    }
+    animate();
+
+
+
 </script>
 </body>
 </html>

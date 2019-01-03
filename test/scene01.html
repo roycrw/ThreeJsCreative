@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+    </style>
+</head>
+<body>
+
+
+<script src="../build/three.js"></script>
+<script>
+    // Our Javascript will go here.
+//    创建场景, 场景不需要大小
+    var scene = new THREE.Scene();
+//    创建相机
+    var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.01, 1000);
+//    创建渲染器， 需要设置渲染器大小， 后者说想要创建的页面的大小！
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth/2, window.innerHeight/2);
+
+//  添加节点
+    document.body.appendChild(renderer.domElement);
+
+
+//    创建物体结构,几何体
+    var geometry = new THREE.BoxGeometry(1,1,1);
+//    创建材质, 简单着几何体就好！
+    var material = new THREE.MeshBasicMaterial({color: 0xff0000});
+//    创建物体对象, 网格（mesh)，基于多边形网格的物体的类。
+    var cube = new THREE.Mesh(geometry, material);
+
+//    将物体添加到场景里面。
+    scene01.add(cube);
+//    此时要注意摄像机和物体的位置。
+    camera.position.z=5;
+
+//    制作动画
+    function animate() {
+        requestAnimationFrame(animate);
+        // 进行渲染页面
+        renderer.render(scene01, camera);
+        // 进行旋转， 注意每秒要 * 60 速率
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+    }
+    animate();
+    
+
+</script>
+</body>
+</html>
