@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            color: #eee;
+            font-family: Monospace;
+            font-size: 13px;
+            text-align: center;
+
+            background-color: #000;
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+    </style>
+</head>
+<body>
+
+
+<script src="../build/three.js"></script>
+<script>
+    // Our Javascript will go here.
+
+//    定义 场景、 相机、 渲染器
+    let scene, caerma, renderer;
+
+//    定义 鼠标坐标
+    let mouseX = 0, mouseY = 0;
+
+//    定义 坐标一半
+    let windowHalfX = window.innerWidth / 2;
+    let windowHalfY = window.innerHeight / 2;
+
+
+//
+    init();
+    animate();
+
+    function init() {
+
+//     定义场景, 定义背景颜色
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color( 0xffffff );
+
+//     定义相机
+        camera = new THREE.PerspectiveCamera( 20, window.innerWidth / window.innerHeight, 1, 10000 );
+        camera.position.z = 1800;
+
+//        定义平行光,好像几乎没有什么效果！
+        let light = new THREE.DirectionalLight( 0xff0000 );
+        light.position.set( 0, 0, 1 );
+        scene.add( light );
+
+//      shadow
+//        定义了canvas.. 虽然创建了 canvas，但是没有实际添加到 document。
+        let canvas = document.createElement( 'canvas' );
+        canvas.width = 128;
+        canvas.height = 128;
+
+        let context = canvas.getContext( '2d' );
+//          设置放射渐变-圆形 渐变, 参数是渐变的 开始的内圆， 结束的外圆。
+//          定义开始和结束的色环。 黑色到灰色的阴影圆环。
+        let gradient = context.createRadialGradient( canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2 );
+        gradient.addColorStop( 0.1, 'rgba(210,210,210,1)' );
+        gradient.addColorStop( 1,'rgba(255,255,255,1)' );
+
+        context.fillStyle = gradient;
+        context.fillRect( 0, 0, canvas.width, canvas.height );
+//        结束 canvas 的定义..
+
+//      定义 纹理贴图素材（这里是从 canvas 元素中创建 纹理贴图）
+        let shadowTexture = new THREE.CanvasTexture( canvas );
+
+//      定义 基础网格材质（ 用于描绘阴影）
+        let shadowMaterial = new THREE.MeshBasicMaterial( { map: shadowTexture } );
+//        创建 平面 缓冲 几何体 结构
+        let shadowGeo = new THREE.PlaneBufferGeometry( 300, 300, 1, 1 );
+
+//        创建三个物体对象， 即三个网格对象。
+//        创建三个阴影。
+//        定义三个物体/几何体（ 用于表现阴影 ）
+
+        let shadowMesh;
+
+        shadowMesh = new THREE.Mesh( shadowGeo, shadowMaterial );
+        shadowMesh.position.y = - 200;
+        shadowMesh.rotation.x = - Math.PI / 2;
+        scene.add( shadowMesh );
+
+        shadowMesh = new THREE.Mesh( shadowGeo, shadowMaterial );
+        shadowMesh.position.y = - 200;
+        shadowMesh.position.x = - 400;
+        shadowMesh.rotation.x = - Math.PI / 2;
+        scene.add( shadowMesh );
+
+        shadowMesh = new THREE.Mesh( shadowGeo, shadowMaterial );
+        shadowMesh.position.y = - 200;
+        shadowMesh.position.x = 400;
+        shadowMesh.rotation.x = - Math.PI / 2;
+        scene.add( shadowMesh );
+
+
+//      定义 二十面体 缓冲 几何体
+        let radius = 200;
+//      实现 三个 二十面体 缓冲 几何体。
+
+        let geometry1 = new THREE.IcosahedronBufferGeometry( radius, 1 );
+
+//      属性 attributes 通过 hashmap 存储该几何体相关的属性。
+//         这个应该是 二十面体 本身创建对象后， 会自动分配的 属性。
+        let count = geometry1.attributes.position.count;
+//      原生JS：Float32Array 类型数组代表的是平台字节顺序为32位的浮点数型数组
+//        这个类用于存储与BufferGeometry相关联的 attribute
+//        （例如顶点位置向量，面片索引，法向量，颜色值，UV坐标以及任何自定义 attribute ）
+        geometry1.addAttribute( 'color', new THREE.BufferAttribute( new Float32Array( ( count * 3 ) ), 3 ) );
+
+        let geometry2 = geometry1.clone();
+        let geometry3 = geometry1.clone();
+
+
+//      把相关的属性 引用 出来，然后进行使用。
+        let position1 = geometry1.attributes.position;
+        let position2 = geometry2.attributes.position;
+        let position3 = geometry3.attributes.position;
+
+        let color1 = geometry1.attributes.color;
+        let color2 = geometry1.attributes.color;
+        let color3 = geometry1.attributes.color;
+
+//        试着把写出来的 geometry 进行输出看看
+//        缓冲几何体 数据：
+//        f1: attributes, boundingBox, boundingSphere, drawRange, groups ...
+//        几何体的 相关信息 储存在 attributes 里面。包括：
+//          color, normal, position, uv
+
+      console.log( geometry1 );
+
+//      之后对 颜色属性内容进行操作了。
+        let color = new THREE.Color();
+//         count 是 attribute 里面所有几何体属性数据array 的长度。
+        for ( let i = 0; i < count; i ++ ) {
+
+//          三种颜色模式
+            
+
+        }
+
+
+
+//      实现 渲染器 将 相机截取场景 进行渲染。
+        renderer = new THREE.WebGLRenderer( { antialias: true } );
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+
+//      添加相关事件。
+
+        document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
+    }
+    
+    function onDocumentMouseMove( event ) {
+
+        mouseX = ( event.clientX - windowHalfX );
+        mouseY = ( event.clientY - windowHalfY );
+
+    }
+
+    function animate() {
+
+        requestAnimationFrame(animate);
+        render();
+
+    }
+    
+    function render() {
+
+        camera.position.x += ( mouseX - camera.position.x ) * 0.05;
+        camera.position.y += ( - mouseY - camera.position.y ) * 0.05; //
+
+
+        camera.lookAt( scene.position );
+        renderer.render( scene, camera );
+        
+    }
+
+</script>
+</body>
+</html>
