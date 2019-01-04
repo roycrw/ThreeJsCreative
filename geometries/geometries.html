@@ -44,8 +44,8 @@
         scene = new THREE.Scene();
 
 //        致命错误！！！！！！！，参数是摄像头的屏宽比！！！！！! 摄像头屏幕设置的比例不对会改变物体的所有尺寸了！！！
-        camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.01, 2000 );
-        camera.position.z = 400;
+        camera = new THREE.PerspectiveCamera( 45, window.innerWidth/window.innerHeight, 0.01, 2000 );
+        camera.position.y = 400;
 
 
         var object;
@@ -55,10 +55,10 @@
         scene.add( ambientLight );
 
 //       定义一束点光， 需要绑定到摄像头上面。参数时 颜色和 光强
-//        然后添加摄像头
-//        var pointLight = new THREE.PointLight( 0xffffff, 0.8 );
-//        camera.add( pointLight );
-//        scene.add( camera );
+//        然后添加摄像头, 加点点光之后， 物体就会有明暗变化！ 效果相当不错。
+        var pointLight = new THREE.PointLight( 0xffffff, 0.8 );
+        camera.add( pointLight );
+        scene.add( camera );
 
 //         加载素材, load 方法返回 一个 素材。
 //         wrapS 和 wrapT 分别定义了其在水平方向和垂直方向如何进行包裹。
@@ -70,6 +70,8 @@
 //          定义材质
 //         meshphongMaterial 是一种镜面高光泽的材质。
         var material = new THREE.MeshPhongMaterial( { map: map, side: THREE.DoubleSide } );
+
+        // ... 四个一组。
 
 //         开始定义物体。 其中的结构是直接定义使用了！
 //         定义的是 球形 缓冲 几何体。 带有棱的球形几何体。 参数是 球体半径，水平分段数， 垂直分段数。
@@ -91,6 +93,58 @@
         object = new THREE.Mesh( new THREE.TetrahedronBufferGeometry( 75, 0 ), material );
         object.position.set( 300, 0, 200 );
         scene.add( object );
+
+        // ... 四个一组。
+//        定义平面缓冲几何体。
+        object = new THREE.Mesh( new THREE.PlaneBufferGeometry( 100, 100, 4, 4 ), material );
+        object.position.set( - 300, 0, 0 );
+        scene.add( object );
+
+//        定义 立体 缓冲几何体。
+        object = new THREE.Mesh( new THREE.BoxBufferGeometry( 100, 100, 100, 4, 4, 4 ), material );
+        object.position.set( -100, 0, 0 );
+        scene.add( object );
+
+//        定义 圆型 缓冲几何体。
+        object = new THREE.Mesh( new THREE.CircleBufferGeometry( 50, 20, 0, Math.PI * 2 ), material );
+        object.position.set( 100, 0, 0 );
+        scene.add( object );
+
+//        定义 环型 缓冲几何体
+        object = new THREE.Mesh( new THREE.RingBufferGeometry( 10, 50, 20, 5, 0, Math.PI * 2 ), material );
+        object.position.set( 300, 0, 0 );
+        scene.add( object );
+
+        // 四个一组
+
+//        定义 圆柱 缓冲几何体， 可以开口
+        object = new THREE.Mesh( new THREE.CylinderBufferGeometry( 25, 75, 100, 40, 5 ), material );
+        object.position.set( - 300, 0, - 200 );
+        scene.add( object );
+
+//        定义一些点
+        var points = [];
+
+        for( var i = 0; i < 50; i++ ) {
+
+            points.push( new THREE.Vector2( Math.sin( i * 0.2 ) * Math.sin( i * 0.2 ) * 15 + 50, ( i - 5 ) * 2 ) );
+
+        }
+//        定义 车削 缓冲几何体, 这个定义出来的是一个 管道了直接就。（ 根据给定坐标点集合 ）
+        object = new THREE.Mesh( new THREE.LatheBufferGeometry( points, 20 ), material );
+        object.position.set( - 100, 0, - 200 );
+        scene.add( object );
+
+//      定义 圆环 缓冲几何体
+        object = new THREE.Mesh( new THREE.TorusBufferGeometry( 50, 20, 20, 20 ), material );
+        object.position.set( 100, 0, - 200 );
+        scene.add( object );
+
+//        定义 圆环 节点 缓冲几何体
+        object = new THREE.Mesh( new THREE.TorusKnotBufferGeometry( 50, 10, 50, 20 ), material );
+        object.position.set( 300, 0, - 200 );
+        scene.add( object );
+
 
 //        先定义这几种吧！
 
@@ -117,7 +171,7 @@
 
 //        摄像头进行公转 移动。
         camera.position.x = Math.cos( timer ) * 800;
-        camera.position.y = Math.sin( timer ) * 800;
+        camera.position.z = Math.sin( timer ) * 800;
 
 //        摄像头对准场景
         camera.lookAt( scene.position );
