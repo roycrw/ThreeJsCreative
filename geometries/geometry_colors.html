@@ -39,6 +39,8 @@
     let windowHalfX = window.innerWidth / 2;
     let windowHalfY = window.innerHeight / 2;
 
+    let mesh1, mesh2, mesh3;
+
 
 //
     init();
@@ -55,7 +57,7 @@
         camera.position.z = 1800;
 
 //        定义平行光,好像几乎没有什么效果！
-        let light = new THREE.DirectionalLight( 0xff0000 );
+        let light = new THREE.DirectionalLight( 0xffffff );
         light.position.set( 0, 0, 1 );
         scene.add( light );
 
@@ -91,18 +93,18 @@
         let shadowMesh;
 
         shadowMesh = new THREE.Mesh( shadowGeo, shadowMaterial );
-        shadowMesh.position.y = - 200;
+        shadowMesh.position.y = - 250;
         shadowMesh.rotation.x = - Math.PI / 2;
         scene.add( shadowMesh );
 
         shadowMesh = new THREE.Mesh( shadowGeo, shadowMaterial );
-        shadowMesh.position.y = - 200;
+        shadowMesh.position.y = - 250;
         shadowMesh.position.x = - 400;
         shadowMesh.rotation.x = - Math.PI / 2;
         scene.add( shadowMesh );
 
         shadowMesh = new THREE.Mesh( shadowGeo, shadowMaterial );
-        shadowMesh.position.y = - 200;
+        shadowMesh.position.y = - 250;
         shadowMesh.position.x = 400;
         shadowMesh.rotation.x = - Math.PI / 2;
         scene.add( shadowMesh );
@@ -132,16 +134,17 @@
         let position3 = geometry3.attributes.position;
 
         let color1 = geometry1.attributes.color;
-        let color2 = geometry1.attributes.color;
-        let color3 = geometry1.attributes.color;
+        let color2 = geometry2.attributes.color; // 这里是引用，返回的是同一个对象！！
+        let color3 = geometry3.attributes.color;
 
 //        试着把写出来的 geometry 进行输出看看
+//        console.log(color1);
 //        缓冲几何体 数据：
 //        f1: attributes, boundingBox, boundingSphere, drawRange, groups ...
 //        几何体的 相关信息 储存在 attributes 里面。包括：
 //          color, normal, position, uv
 
-      console.log( geometry1 );
+        //console.log( geometry1 );
 
 //      之后对 颜色属性内容进行操作了。
         let color = new THREE.Color();
@@ -149,10 +152,65 @@
         for ( let i = 0; i < count; i ++ ) {
 
 //          三种颜色模式
-            
+//          使用关于 radius 的函数，来定义有关的参数。
+//             这个参数得到的结果是 y 坐标值与 半径的比例 与 1 之间的平均值。 InterleavedBufferAttribute。
+//             所以是根据坐标来生成颜色。这样的话，y坐标等于半径的这一圈基本上差值都变成了0。
+//             比喻，相当于赤道的一圈都变成了 黑色了.
+//            console.log( 'pos:' + ( position1.getY( i ) / radius + 1 ) / 2 );
+//             控制的是 色相度。
+            color.setHSL( ( position1.getY( i ) / radius + 1 ) / 2, 1.0, 0.5 );
+//             依次 设置 矢量索引的值。
+            color1.setXYZ( i, color.r, color.g, color.b );
+
+//              第二个 颜色对象引用创建。 改变后，直接在 geometry 物体缓冲 结构上生效。
+//             色相度为0 ， 饱和度为 平均差值 ， 亮度值为 0.5
+//                  注：色相度为 0, 代表红色。
+            color.setHSL( 0, ( position2.getY( i ) / radius + 1 ) / 2, 0.5 );
+            color2.setXYZ( i, color.r, color.g, color.b );
+
+//              第三个 颜色对象创建。 改变后，直接在 geometry 物体缓冲 结构上生效。
+//             setRGB 分别代表在各个通道的值。
+//              这相当与 红色通道全开， 绿色通道变动， 蓝色通道为 0.
+            color.setRGB( 0, 0.8 - ( position3.getY(i) / radius + 1 ) / 2, 1 );
+            color3.setXYZ( i, color.r, color.g, color.b );
+
 
         }
 
+//        设置高光材质。
+        let material = new THREE.MeshPhongMaterial( {
+            color: 0xffffff,
+            flatShading: true,
+            vertexColors: THREE.VertexColors,
+            shininess: 0
+        } );
+
+//         设置线框图材质, 黑色的。
+//         设置 wireframe 属性可以将基本网格材质 渲染成 线框， 非常适合调试。这个 transparent 又不知道是什么鬼用途了。
+        let wireframeMaterial = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true, transparent: true } );
+
+//         添加第一个几何体。
+        mesh1 = new THREE.Mesh( geometry1, material );
+        let wireframe = new THREE.Mesh( geometry1, wireframeMaterial ); // 设置了线框几何体。
+//         对象间添加 add  方法是 Object3D 的对象方法.
+//         对象上 添加对象，反映了对象之间的关系。
+        mesh1.add( wireframe );
+        mesh1.position.x = - 400;
+//        mesh.rotation.x = - 1.87; // 这样会倾斜向上一些。。
+        scene.add( mesh1 );
+
+
+        mesh2 = new THREE.Mesh( geometry2, material );
+        let wireframe2 = new THREE.Mesh( geometry2, wireframeMaterial ); // 设置了线框几何体。
+        mesh2.add( wireframe2 );
+//        default position.x = 0;
+        scene.add( mesh2 );
+
+        mesh3 = new THREE.Mesh( geometry3, material );
+        let wireframe3 = new THREE.Mesh( geometry3, wireframeMaterial );
+        mesh3.add( wireframe3 );
+        mesh3.position.x = 400;
+        scene.add( mesh3 );
 
 
 //      实现 渲染器 将 相机截取场景 进行渲染。
@@ -168,6 +226,7 @@
     
     function onDocumentMouseMove( event ) {
 
+        //        通过调整 这个 mouseX 产生的距离数， 可以控制物体的大小 远近！
         mouseX = ( event.clientX - windowHalfX );
         mouseY = ( event.clientY - windowHalfY );
 
@@ -179,12 +238,16 @@
         render();
 
     }
-    
+
+
     function render() {
 
         camera.position.x += ( mouseX - camera.position.x ) * 0.05;
         camera.position.y += ( - mouseY - camera.position.y ) * 0.05; //
 
+        mesh1.rotation.x += 0.01;
+        mesh2.rotation.x += 0.01;
+        mesh3.rotation.x += 0.01;
 
         camera.lookAt( scene.position );
         renderer.render( scene, camera );

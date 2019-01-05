@@ -32,11 +32,16 @@
     // Our Javascript will go here.
 
     //    定义 场景、 相机、 渲染器
+    let scene, camera, renderer;
 
     //    定义 鼠标坐标
+    let mouseX = 0, mouseY = 0;
 
     //    定义 坐标一半
+    let windowHalfX = window.innerWidth / 2, windowHalfY = window.innerHeight / 2;
 
+
+    let mesh1, mesh2, mesh3;
     //
     init();
     animate();
@@ -44,22 +49,126 @@
     function init() {
 
 //     定义场景
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color( 0xffffff );
 
 //     定义相机
-
+        camera = new THREE.PerspectiveCamera( 20, window.innerWidth / window.innerHeight, 1, 20000 );
+        camera.position.z = 1800;
 //        定义平行光
+        let light = new THREE.DirectionalLight( 0xffffff );
+        light.position.set( 0, 0, 1 );
+        scene.add( light );
 
+//        创建阴影
 //        定义了canvas..
+        let canvas = document.createElement( 'canvas' );
+        canvas.width = 128;
+        canvas.height = 128;
+
+        let context = canvas.getContext( '2d' );
+        let gradient = context.createRadialGradient( canvas.width / 2, canvas.height /2, 0, canvas.width / 2, canvas.height /2, canvas.width / 2 );
+        gradient.addColorStop( 0.1, 'rgba(150,150,150,1)' );
+        gradient.addColorStop( 1, 'rgba(255,255,255,255)' );
+
+        context.fillStyle = gradient;
+        context.fillRect( 0, 0, canvas.width, canvas.height );
 
 //      定义 纹理贴图素材（这里是从 canvas 元素中创建 纹理贴图）
+        //  定义 基础网格材质（ 用于描绘阴影）
+//          有意思的是 这种 canvas 创建出来的东西是 单面 的。
+        let shadowTexture = new THREE.CanvasTexture( canvas );
+        let shadowMaterial = new THREE.MeshBasicMaterial( { map: shadowTexture } );
+        //  定义结构, 这里直接定义了大小了
+        let shadowGeo = new THREE.PlaneBufferGeometry( 300, 300, 1, 1 );
 
-//      定义 基础网格材质（ 用于描绘阴影）
-
-//      定义 平面 缓冲 几何体 结构。
+        let shadowMesh;
 
 //      定义三个物体/几何体（ 用于表现阴影 ）
+//        这里使用 Geometry 类 和 material 类创建， 而不是下面的。
+        shadowMesh = new THREE.Mesh( shadowGeo, shadowMaterial );
+        shadowMesh.position.x = - 400;
+        shadowMesh.position.y = -250;
+        shadowMesh.rotation.x = - Math.PI / 2;
+        scene.add( shadowMesh );
 
-//      定义 二十面体 缓冲 几何体
+        shadowMesh = new THREE.Mesh( shadowGeo, shadowMaterial );
+        shadowMesh.position.x = 0;
+        shadowMesh.position.y = -250;
+        shadowMesh.rotation.x = - Math.PI / 2;
+        scene.add( shadowMesh );
+
+        shadowMesh = new THREE.Mesh( shadowGeo, shadowMaterial );
+        shadowMesh.position.x = 400;
+        shadowMesh.position.y = -250;
+        shadowMesh.rotation.x = - Math.PI / 2;
+        scene.add( shadowMesh );
+
+
+        let radius = 200;
+
+//      定义 二十面体 缓冲 几何体, 保存了 颜色等数据。
+        let geometry1 = new THREE.IcosahedronBufferGeometry( radius, 1 );
+        let count = geometry1.attributes.position.count;
+        geometry1.addAttribute( 'color', new THREE.BufferAttribute( new Float32Array( count * 3 ), 3 ) );
+
+        let geometry2 = geometry1.clone();
+        let geometry3 = geometry1.clone();
+
+        let position1 = geometry1.attributes.position;
+        let position2 = geometry2.attributes.position;
+        let position3 = geometry3.attributes.position;
+
+//         这边的 color 要自己添加到 几何体的属性里面 去的！！！
+        let colors1 = geometry1.attributes.color;
+        let colors2 = geometry2.attributes.color;
+        let colors3 = geometry3.attributes.color;
+
+
+        let color = new THREE.Color();
+
+        for ( let i = 0; i < count; i ++ ) {
+
+//            这边要通过 position.getY 来进行访问。
+            color.setHSL( ( position1.getY( i ) / radius + 1 ) / 2, 1.0, 0.5 );
+            colors1.setXYZ( i, color.r, color.g, color.b );
+
+            color.setHSL( 0, ( position2.getY( i ) / radius + 1 ) / 2, 0.5);
+            colors2.setXYZ( i, color.r, color.g, color.b );
+
+            // 设置主要颜色为 红色。
+            color.setRGB( 0.2,  0.8 - ( position3.getY( i ) / radius + 1 ) / 2, 0.5 );
+            colors3.setXYZ( i, color.r, color.g, color.b );
+
+        }
+
+//       创建线框对象。transparent 可以定义为线框不要反光
+        let wireframematerial = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true, transparent: true } );
+
+        let material = new THREE.MeshPhongMaterial( {
+            color: 0xffffff,
+            flatShading: true,
+            vertexColors: THREE.VertexColors
+        } );
+
+        mesh1 = new THREE.Mesh( geometry1, material );
+        let wireframe1 = new THREE.Mesh( geometry1, wireframematerial );
+        mesh1.add( wireframe1 );
+        mesh1.position.x = - 400;
+        scene.add( mesh1 );
+
+        mesh2 = new THREE.Mesh( geometry2, material );
+        let wireframe2 = new THREE.Mesh( geometry2, wireframematerial );
+        mesh2.add( wireframe2);
+        mesh2.position.x = 0;
+        scene.add( mesh2 );
+
+        mesh3 = new THREE.Mesh( geometry3, material );
+        let wireframe3 = new THREE.Mesh( geometry3, wireframematerial );
+        mesh3.add( wireframe3 );
+        mesh3.position.x = 400;
+        scene.add( mesh3 );
+
 
 //          蒙皮设置相关颜色。
 
@@ -67,15 +176,29 @@
 
 //      实现 三个 二十面体 缓冲 几何体。
 
+        // test
+//        let cube = new THREE.Mesh( new THREE.BoxGeometry(50, 50, 50), new THREE.MeshBasicMaterial( { color: 0xff0000 } ) );
+//        scene.add(cube);
+
 //      实现 渲染器 将 相机截取场景 进行渲染。
 
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+
 //      添加相关事件。
+        document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 
 
     }
 
     function onDocumentMouseMove( event ) {
 
+        // 表示相对中间点的距离。
+//        通过调整 这个 mouseX 产生的距离数， 可以控制物体的大小 远近！
+        mouseX = ( event.clientX - windowHalfX );
+        mouseY = ( event.clientY - windowHalfY );
+//        consolo.log()
     }
 
     function animate() {
@@ -87,7 +210,20 @@
 
     function render() {
 
+        // 设置 camera 的位置， 移动要慢于鼠标
+//        最终  camera 的位置 和 mouseX 的位置应该是一样的。
+//        这样设置成小于 20 倍的速度进行移动。
+//        上下颠倒 移动， 就把坐标倒置即可。
+        camera.position.x += ( mouseX - camera.position.x ) * 0.05;
+        camera.position.y += ( - mouseY - camera.position.y ) * 0.05;
 
+        mesh1.rotation.x += 0.004;
+        mesh2.rotation.x += 0.004;
+        mesh3.rotation.x += 0.004;
+
+
+        camera.lookAt( scene.position );
+        renderer.render( scene, camera );
 
     }
 
