@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>geometry convex</title>
+    <style>
+        body {
+            color: #eee;
+            font-family: Monospace;
+            font-size: 13px;
+            text-align: center;
+
+            background-color: #000;
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+    </style>
+</head>
+<body>
+
+
+<script src="../build/three.js"></script>
+<script src="../resources/js/controls/OrbitControls.js"></script>
+<script src="../resources/js/QuickHull.js"></script>
+<script src="../resources/js/geometries/ConvexGeometry.js"></script>
+
+<script>
+    // Our Javascript will go here.
+
+//    定义变量
+    let group, camera, scene, renderer;
+    
+    init();
+    animate();
+    
+    function init() {
+
+//        定义场景。
+        scene = new THREE.Scene();
+
+//        定义相机
+        camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 1000 );
+        camera.position.set( 15, 20, 30 );
+        scene.add( camera );
+
+//        定义渲染器
+        renderer = new THREE.WebGLRenderer( { antilias: true } );
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+
+//        定义控制器
+        let contrls = new THREE.OrbitControls( camera, renderer.domElement );
+        contrls.minDistance = 20;
+        contrls.maxDistance = 50;
+        contrls.maxPolarAngle = Math.PI / 2;
+
+        scene.add( new THREE.AmbientLight( 0x222222 ) );
+
+//        定义 点光
+        let light = new THREE.PointLight( 0xffffff, 1 );
+        camera.add( light );
+
+//        定义 三维轴 显示
+         scene.add( new THREE.AxesHelper( 25 ) );
+
+//        定义贴图加载器 以及 贴图
+         let loader = new THREE.TextureLoader();
+         let texture = loader.load( '../resources/textures/sprites/disc.png' );
+
+//        定义对象组
+         group = new THREE.Group();
+         scene.add(group);
+
+//        定义点结构,十二面体顶点
+        let vertices = new THREE.DodecahedronGeometry( 10, 1 ).vertices;
+
+
+//        定义点材质
+        let pointsMaterial = new THREE.PointsMaterial( {
+
+            color: 0x00ff00,
+            map: texture,
+            size: 0.5,
+            alphaTest: 0.5
+
+        } );
+
+//      从 3d 点对象组创建一个结构。
+        let pointsGeo = new THREE.BufferGeometry().setFromPoints( vertices );
+
+        let points = new THREE.Points( pointsGeo, pointsMaterial );
+        group.add( points );
+
+        let meshMaterial = new THREE.MeshLambertMaterial( {
+
+            color: 0x11cc22,
+            opacity: 0.4,
+            transparent: true
+
+        } );
+
+//      这里是从 得到的 点 集合，得到凸包几何体。
+        let meshGeometry = new THREE.ConvexBufferGeometry( vertices );
+
+        let mesh1 = new THREE.Mesh( meshGeometry, meshMaterial );
+        mesh1.material.side = THREE.BackSide;
+        mesh1.renderOrder = 0;
+        group.add( mesh1 );
+
+        let mesh2 = new THREE.Mesh( meshGeometry, meshMaterial.clone() );
+        mesh2.material.side = THREE.FrontSide;
+        mesh2.renderOrder = 1;
+        group.add( mesh2 );
+
+
+
+//        定义点对象
+
+
+        // test
+//        let cube = new THREE.Mesh( new THREE.BoxGeometry( 5, 5, 5 ), new THREE.MeshBasicMaterial( { color: 0x00ff00 } ) );
+//        scene.add( cube );
+
+    }
+    
+    function animate() {
+
+        requestAnimationFrame(animate);
+        render();
+
+    }
+    
+    function render() {
+
+        group.rotation.y += 0.005;
+        camera.lookAt( scene.position );
+        renderer.render( scene, camera );
+
+    }
+    
+
+</script>
+</body>
+</html>

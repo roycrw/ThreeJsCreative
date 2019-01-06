@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            color: #eee;
+            font-family: Monospace;
+            font-size: 13px;
+            text-align: center;
+
+            background-color: #000;
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+    </style>
+</head>
+<body>
+
+
+<script src="../build/three.js"></script>
+<script>
+
+    // Our Javascript will go here.
+
+//    定义变量,
+    let camera, scene, renderer;
+    let lut, legendLayout;
+
+    let mesh, material;
+
+    let colorMap;
+    let numberOfColors;
+
+//    定义 缓冲几何体 加载器
+
+    let loader = new THREE.BufferGeometryLoader();
+
+    init();
+    animate();
+//
+    function init() {
+
+//            定义场景
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color( 0xffffff );
+
+//            定义相机, 这个是很近的距离啊！
+        camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 100 );
+        camera.position.z = 10;
+
+//            定义环境光, 这样会影响 物体对象的实际颜色。
+        let ambientLight = new THREE.AmbientLight( 0x444444 );
+        scene.add( ambientLight );
+
+//        颜色种类 和 数量吧？
+        colorMap = 'rainbow';
+        numberOfColors = 512;
+
+        legendLayout = 'vertical';
+
+//            定义 木材类 材质
+        material = new THREE.MeshLambertMaterial( {
+            side: THREE.DoubleSide,
+            color: 0xeeeeee,
+            vertexColors: THREE.VertexColors
+        } );
+
+//            加载模型, 把之前的参数全部都放进来了。
+        loadModel( colorMap, numberOfColors, legendLayout );
+
+//            定义 平行光
+        let directionalLight = new THREE.DirectionalLight( 0xffffff, 0.7 );
+        directionalLight.position.set( 17, 9, 30 );
+        scene.add( directionalLight );
+
+//            定义渲染器
+        renderer = new THREE.WebGLRenderer( { antialias: true } );
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+
+//            添加事件
+
+    }
+
+    function animate() {
+
+        requestAnimationFrame(animate);
+        render();
+
+    }
+
+    function render() {
+
+        renderer.render( scene, camera );
+
+    }
+
+    /* 加载 bufferGeometry 模型数据 */
+    function loadModel( colorMap, numberOfColors, legendLayout ) {
+
+//          loader 加载资源,并在加载完成后进行回调函数.
+//        使用 json 模型
+        loader.load( '../resources/models/json/pressure.json', function ( geometry ) {
+
+            // 加载完成后， 对加载的模型进行处理。
+//            基于外接矩形， 将 几何体 居中。
+            geometry.center();
+//            每个面的法向量对顶点法向量的影响按照面的面积大小来计算
+            geometry.computeVertexNormals();
+
+//            用于存储颜色
+            let lutColors = [];
+
+            // 是用来显示参照 量表条 的。
+//            lut = new THREE.Lut( colorMap, numberOfColors );
+            // 然后设置 颜色。
+
+            for ( let i = 0; i < geometry.attributes.pressure.array.length; i ++ ) {
+
+                color = new THREE.Color( 0xf05050 );
+
+                lutColors[ 3 * i ] = color.r;
+                lutColors[ 3 * i + 1 ] = color.g;
+                lutColors[ 3 * i + 2 ] = color.b;
+
+            }
+
+            geometry.addAttribute( 'color', new THREE.Float32BufferAttribute( lutColors, 3 ) );
+            geometry.removeAttribute( 'pressure' );
+
+//             使用加载的模型结构 和 木材材质， 创建物体几何体。
+            mesh = new THREE.Mesh( geometry, material );
+
+            scene.add( mesh );
+
+//            之后添加显示条。
+//             这就是比较有难度的部分了，要熟悉 ThreeJs， 才能做到自己定义视觉显示的类吧！
+
+
+        } );
+
+
+
+    }
+
+    /* 清除场景内容 */
+    function clearScene() {
+
+    }
+
+    /* 按键处理事件 */
+    function onKeyDown( e ) {
+
+    }
+
+
+</script>
+</body>
+</html>
