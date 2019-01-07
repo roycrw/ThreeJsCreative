@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            color: #eee;
+            font-family: Monospace;
+            font-size: 13px;
+            text-align: center;
+
+            background-color: #000;
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+    </style>
+</head>
+<body>
+
+
+<script src="../build/three.js"></script>
+
+<script>
+    // Our Javascript will go here.
+
+//    定义对象变量
+    let camera, controls, scene, renderer;
+
+//    定义数据变量
+    let worldWidth = 128, worldDepth = 128;
+    let worldHalfWidth = worldWidth / 2;
+    let worldHalfDepth = worldDepth / 2;
+//    生成 所有砖块的高度 数组。
+    let data = generateHeight( worldWidth, worldDepth );
+
+    let clock = new THREE.Clock();
+
+
+//    定义时钟
+
+    init();
+    animate();
+
+    function init() {
+
+//        创建相机
+        camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 );
+        camera.position.y = getY( worldHalfWidth, worldDepth ) * 100;
+
+//        创建控制器
+
+//        创建场景
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color( 0xbfd1e5 );
+
+//        side。 砖块的结构？
+//         定义一个 4x4 矩阵。 还是贴图的结构？？
+
+        var matrix = new THREE.Matrix4();
+
+        var pxGeometry = new THREE.PlaneBufferGeometry( 100, 100 );
+        pxGeometry.attributes.uv.array[ 1 ] = 0.5;
+        pxGeometry.attributes.uv.array[ 3 ] = 0.5;
+        pxGeometry.rotateY( Math.PI / 2 );
+        pxGeometry.translate( 50, 0, 0 );
+
+        var nxGeometry = new THREE.PlaneBufferGeometry( 100, 100 );
+        nxGeometry.attributes.uv.array[ 1 ] = 0.5;
+        nxGeometry.attributes.uv.array[ 3 ] = 0.5;
+        nxGeometry.rotateY( - Math.PI / 2 );
+        nxGeometry.translate( - 50, 0, 0 );
+
+        var pyGeometry = new THREE.PlaneBufferGeometry( 100, 100 );
+        pyGeometry.attributes.uv.array[ 5 ] = 0.5;
+        pyGeometry.attributes.uv.array[ 7 ] = 0.5;
+        pyGeometry.rotateX( - Math.PI / 2 );
+        pyGeometry.translate( 0, 50, 0 );
+
+        var pzGeometry = new THREE.PlaneBufferGeometry( 100, 100 );
+        pzGeometry.attributes.uv.array[ 1 ] = 0.5;
+        pzGeometry.attributes.uv.array[ 3 ] = 0.5;
+        pzGeometry.translate( 0, 0, 50 );
+
+        var nzGeometry = new THREE.PlaneBufferGeometry( 100, 100 );
+        nzGeometry.attributes.uv.array[ 1 ] = 0.5;
+        nzGeometry.attributes.uv.array[ 3 ] = 0.5;
+        nzGeometry.rotateY( Math.PI );
+        nzGeometry.translate( 0, 0, - 50 );
+
+
+//        定义平面 结构。
+
+        let geometries = [];
+
+        /* 设置 geometries 数组集合 的数据。里面包括了 所有的 立体砖块的数据。  */
+
+
+        /* 通过贴图生成立体几何体。 */
+        /*
+        假设： 将一个 结构 几何体 集合 合并成一个 几何体。
+        var geometry = THREE.BufferGeometryUtils.mergeBufferGeometries( geometries );
+        geometry.computeBoundingSphere();
+
+        将所有几何体 作为一个 几何体进行渲染图形。
+
+        假设： 加载贴图。
+        var texture = new THREE.TextureLoader().load( 'textures/minecraft/atlas.png' );
+        texture.magFilter = THREE.NearestFilter;
+
+        假设： 通过上述的 结构 和 贴图生成 物体对象几何体。
+        var mesh = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { map: texture, side: THREE.DoubleSide } ) );
+        scene.add( mesh );
+        */
+
+
+//        安排所有的 brick 砖块。
+
+
+//        使用 BufferGeometryUtls 工具，处理
+
+//        创建贴图
+
+//        创建物体几何体
+
+//        创建环境光 和 平行光。
+
+//        创建渲染器
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+
+
+    }
+
+    /*  生成 高度 的数组。 */
+    function generateHeight( width, height ) {
+
+
+
+    }
+
+    /* 得到Y */
+    function getY( x, z ) {
+
+        return 10;
+
+    }
+
+    function animate() {
+
+        requestAnimationFrame(animate);
+        renderer.render( scene, camera );
+
+    }
+
+
+</script>
+</body>
+</html>

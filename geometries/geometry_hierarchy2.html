@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            color: #eee;
+            font-family: Monospace;
+            font-size: 13px;
+            text-align: center;
+
+            background-color: #000;
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+    </style>
+</head>
+<body>
+
+<!-- 定义多个 立方体序列的 动画 -->
+
+<script src="../build/three.js"></script>
+<script>
+    // Our Javascript will go here.
+
+//    定义变量或者 root
+    let camera, scene, renderer, root;
+
+    init();
+    animate();
+
+    function init() {
+
+//        创建相机
+        camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 15000 );
+        camera.position.z = 1000;
+
+//        创建场景
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color( 0xffffff );
+
+//        创建结构和材质
+        let geo = new THREE.BoxBufferGeometry( 100, 100, 100 );
+        let material = new THREE.MeshNormalMaterial();
+
+//        创建根节点
+        root = new THREE.Mesh( geo, material );
+        root.position.x = 1000;
+        scene.add( root );
+
+//        定义 参数。
+        let amount = 200, object, parent = root;
+
+//        添加足够数量的 对象。
+        for ( let i = 0; i < amount; i ++ ) {
+
+            object = new THREE.Mesh( geo, material );
+            object.position.x = 100;
+
+            // 定义父子对象 关系。
+                // 这样的添加方式会 自动进行 累积位移。
+            parent.add( object );
+            parent = object;
+
+        }
+
+        parent = root;
+
+        for ( let i = 0; i < amount; i ++ ) {
+
+            object = new THREE.Mesh( geo, material );
+            object.position.x = - 100;
+
+            parent.add( object );
+            parent = object;
+
+        }
+
+        parent = root;
+
+        for ( let i = 0; i < amount; i ++ ) {
+
+            object = new THREE.Mesh( geo, material );
+            object.position.y = - 100;
+
+            parent.add( object );
+            parent = object;
+
+        }
+
+        parent = root;
+
+        for ( let i = 0; i < amount; i ++ ) {
+
+            object = new THREE.Mesh( geo, material );
+            object.position.y = 100;
+
+            parent.add( object );
+            parent = object;
+
+        }
+
+        parent = root;
+
+        for ( let i = 0; i < amount; i ++ ) {
+
+            object = new THREE.Mesh( geo, material );
+            object.position.z = - 100;
+
+            parent.add( object );
+            parent = object;
+
+        }
+
+        parent = root;
+
+        for ( let i = 0; i < amount; i ++ ) {
+
+            object = new THREE.Mesh( geo, material );
+            object.position.z = 100;
+
+            parent.add( object );
+            parent = object;
+
+        }
+
+
+
+//        定义 parent
+
+//        重复添加 parent
+
+//        创建渲染器
+        renderer = new THREE.WebGLRenderer( { antialias: true } );
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+
+
+    }
+
+    function animate() {
+
+        requestAnimationFrame( animate );
+        render();
+
+    }
+
+    function render() {
+
+//        动画
+        let time = Date.now() * 0.001;
+
+        let rx = Math.sin( time * 0.7 ) * 0.2;
+        let ry = Math.sin( time * 0.3 ) * 0.1;
+        let rz = Math.sin( time * 0.2 ) * 0.1;
+
+
+
+        camera.lookAt( root.position );
+
+        root.traverse( function ( object ) {
+
+            // 对每一个对象的自身坐标都进行旋转。
+
+            object.rotation.x = rx;
+            object.rotation.y = ry;
+            object.rotation.z = rz;
+
+        } );
+
+        renderer.render( scene, camera );
+
+
+    }
+    
+
+</script>
+</body>
+</html>

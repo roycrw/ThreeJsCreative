@@ -2,23 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8d3d876c-0700-4eb9-8841-aba505169975" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/textures/crate.gif" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/textures/water.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/geometries/geometry_cube.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/geometries/geometry_dynamic.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/geometries/geometry_extrude_shapes.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/geometries/geometry_extrude_shapes2.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/geometries/geometry_extrude_splines.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/geometries/geometry_hierarchy.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/js/controls/FirstPersonControls.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/js/controls/TrackballControls.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/FirstPersonControls01.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/geometry_cube01.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/geometry_dynamic.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/geometry_extrude_shapes01.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/geometry_hierarchy01.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/geometries/geometry_hierarchy2.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/geometries/geometry_minecraft.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/geometries/geometry_normals.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/geometries/geometry_nurbs.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/geometry_convex01.html" afterPath="$PROJECT_DIR$/test/geometry_convex01.html" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -86,6 +74,10 @@
         <option value="$PROJECT_DIR$/geometries/geometry_extrude_splines.html" />
         <option value="$PROJECT_DIR$/geometries/geometry_hierarchy.html" />
         <option value="$PROJECT_DIR$/test/geometry_hierarchy01.html" />
+        <option value="$PROJECT_DIR$/geometries/geometry_hierarchy2.html" />
+        <option value="$PROJECT_DIR$/geometries/geometry_minecraft.html" />
+        <option value="$PROJECT_DIR$/geometries/geometry_normals.html" />
+        <option value="$PROJECT_DIR$/geometries/geometry_nurbs.html" />
       </list>
     </option>
   </component>
@@ -399,15 +391,15 @@
       <workItem from="1546651478491" duration="13623000" />
       <workItem from="1546678077582" duration="8063000" />
       <workItem from="1546776386191" duration="24538000" />
-      <workItem from="1546867066575" duration="1955000" />
+      <workItem from="1546867066575" duration="11304000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="87779000" />
+    <option name="totallyTimeSpent" value="97128000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1456" height="876" extended-state="7" />
+    <frame x="-8" y="-8" width="1456" height="876" extended-state="6" />
     <layout>
       <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2496474" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -458,30 +450,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/geometries/geometry_hierarchy.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/geometries/geometry_convex.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/geometries/geometry_colors.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4104">
-          <caret line="228" column="8" lean-forward="false" selection-start-line="228" selection-start-column="8" selection-end-line="228" selection-end-column="8" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test/geometry_colors01.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3942">
@@ -631,6 +599,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="252">
           <caret line="14" column="0" lean-forward="true" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -742,6 +711,15 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="219">
           <caret line="39524" column="0" lean-forward="true" selection-start-line="39524" selection-start-column="0" selection-end-line="39524" selection-end-column="0" />
+          <folding>
+            <element signature="e#322660#323643#0" expanded="false" />
+            <element signature="e#323678#324062#0" expanded="false" />
+            <element signature="e#324095#325126#0" expanded="false" />
+            <element signature="e#325151#326720#0" expanded="false" />
+            <element signature="e#326744#327208#0" expanded="false" />
+            <element signature="e#327239#328884#0" expanded="false" />
+            <element signature="e#328910#328963#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -812,16 +790,48 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/geometries/geometry_hierarchy.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-193">
-          <caret line="27" column="41" lean-forward="true" selection-start-line="27" selection-start-column="41" selection-end-line="27" selection-end-column="41" />
+        <state relative-caret-position="216">
+          <caret line="38" column="0" lean-forward="true" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/geometries/geometry_hierarchy2.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="509">
+          <caret line="173" column="34" lean-forward="false" selection-start-line="173" selection-start-column="34" selection-end-line="173" selection-end-column="34" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/geometry_hierarchy01.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="527">
-          <caret line="59" column="37" lean-forward="false" selection-start-line="59" selection-start-column="37" selection-end-line="59" selection-end-column="37" />
+        <state relative-caret-position="347">
+          <caret line="49" column="54" lean-forward="true" selection-start-line="49" selection-start-column="54" selection-end-line="49" selection-end-column="54" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/geometries/geometry_minecraft.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="347">
+          <caret line="110" column="31" lean-forward="false" selection-start-line="110" selection-start-column="31" selection-end-line="110" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/geometries/geometry_normals.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="26" column="16" lean-forward="false" selection-start-line="26" selection-start-column="16" selection-end-line="26" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/geometries/geometry_nurbs.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="16" column="9" lean-forward="true" selection-start-line="16" selection-start-column="9" selection-end-line="16" selection-end-column="9" />
           <folding />
         </state>
       </provider>
