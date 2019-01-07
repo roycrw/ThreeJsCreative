@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            color: #eee;
+            font-family: Monospace;
+            font-size: 13px;
+            text-align: center;
+
+            background-color: #000;
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+    </style>
+</head>
+<body>
+
+
+<script src="../build/three.js"></script>
+<script>
+    // Our Javascript will go here.
+
+//    定义变量
+    let camera, scene, renderer, group;
+
+
+    init();
+    animate();
+    
+    function init() {
+
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color( 0xffffff );
+
+        camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 4000  );
+        camera.position.z = 2000;
+
+        group = new THREE.Group();
+
+        let geo = new THREE.BoxBufferGeometry( 100, 100, 100 );
+        let material = new THREE.MeshNormalMaterial();
+
+        for ( let i = 0; i < 1000; i ++ ) {
+
+            let mesh = new THREE.Mesh( geo, material );
+            mesh.position.x = Math.random() * 2000 - 1000;
+            mesh.position.y = Math.random() * 2000 - 1000;
+            mesh.position.z = Math.random() * 2000 - 1000;
+
+            mesh.rotation.x = Math.random() * 2 * Math.PI;
+            mesh.rotation.y = Math.random() * 2 * Math.PI;
+
+            group.add( mesh );
+
+        }
+
+        scene.add( group );
+
+//        let cube = new THREE.Mesh( new THREE.BoxGeometry( 50, 50, 50 ), new THREE.MeshBasicMaterial( { color: 0x00ff00 } ) );
+//        scene.add( cube );
+
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+
+    }
+    
+    function animate() {
+
+        requestAnimationFrame( animate );
+        render();
+
+    }
+    
+    function render() {
+
+        renderer.render( scene, camera );
+        
+    }
+
+
+</script>
+</body>
+</html>

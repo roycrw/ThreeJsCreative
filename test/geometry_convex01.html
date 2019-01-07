@@ -106,6 +106,7 @@
         } );
 
 //      这里是从 得到的 点 集合，得到凸包几何体。
+//          正反都创建透明的材质。 
         let meshGeometry = new THREE.ConvexBufferGeometry( vertices );
 
         let mesh1 = new THREE.Mesh( meshGeometry, meshMaterial );
@@ -117,7 +118,6 @@
         mesh2.material.side = THREE.FrontSide;
         mesh2.renderOrder = 1;
         group.add( mesh2 );
-
 
 
 //        定义点对象

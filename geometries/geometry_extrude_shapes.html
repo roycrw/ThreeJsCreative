@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            color: #eee;
+            font-family: Monospace;
+            font-size: 13px;
+            text-align: center;
+
+            background-color: #000;
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+    </style>
+</head>
+<body>
+
+
+<script src="../build/three.js"></script>
+<script src="../resources/js/controls/TrackballControls.js"></script>
+<script>
+
+    // Our Javascript will go here.
+
+//    定义变量
+    let camera, scene, renderer, controls;
+
+//
+    init();
+    animate();
+
+    function init() {
+
+//        创建场景
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color( 0x222222 );
+
+//        创建相机
+        camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000 );
+        camera.position.set( 0, 0, 500 );
+
+//        创建渲染器
+        renderer = new THREE.WebGLRenderer( { antialias: true } );
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+
+//        创建控制器
+        controls = new THREE.TrackballControls( camera, renderer.domElement );
+        controls.minDistance = 200;
+        controls.maxDistance = 500;
+
+
+//        创建环境光
+        scene.add( new THREE.AmbientLight( 0x222222 ) );
+
+//        创建点光源
+        let light = new THREE.PointLight( 0xffffff );
+        light.position.copy( camera.position );
+        scene.add( light );
+
+        // 创建拉伸几何体。
+//         三种： 1. 闭合曲线。  2. 平滑曲线。  3.嵌套曲线。
+
+//        创建三维样条曲线
+            // 创建要挤压的形状的数据
+        let closedSpline = new THREE.CatmullRomCurve3( [
+
+            new THREE.Vector3( - 60, - 100, 60 ),
+            new THREE.Vector3( - 60, 20, 60 ),
+            new THREE.Vector3( - 60, 120, 60 ),
+            new THREE.Vector3( 60, 20, - 60 ),
+            new THREE.Vector3( 60, - 100, - 60 )
+
+        ] );
+
+        closedSpline.curveType = 'catmullrom'; // 设置曲线类型。
+        closedSpline.closed = true;  // 设置闭合。
+
+//        设置 extrudeSetting 属性。
+
+        let extrudeSettings = { // 挤压出形状的数据。
+
+            steps: 100,
+            bevelEnabled: false,
+            extrudePath: closedSpline
+
+        };
+
+        //      创建闭合曲线。
+//        设置 点 集合， pts
+
+        let pts = [], count = 3;
+
+        for ( let i = 0; i < count; i ++ ) {
+
+            let l = 20;
+
+            let a = 2 * i / count * Math.PI;
+
+            // 定义曲线数据。
+            pts.push( new THREE.Vector2( Math.cos( a ) * l, Math.sin( a ) * l ) );
+
+        }
+
+//        创建 二维形状平面
+        let shape = new THREE.Shape( pts );
+
+//        挤压出形状路径, 结构
+//             通过 二维形状平面 shape 和 option 设置， 挤压出 结构。
+        let geometry = new THREE.ExtrudeBufferGeometry( shape, extrudeSettings );
+
+//        创建 非光泽表面 材质表明
+        let material = new THREE.MeshLambertMaterial( { color: 0x00cc00, wireframe:false } );
+
+//        创建 物体对象 几何体。
+        let mesh = new THREE.Mesh( geometry, material );
+
+        scene.add( mesh );
+
+
+
+        // 创建不闭合的曲线
+//        创建 随机 点集合
+
+        let randomPoints = [];
+
+        for ( let i = 0; i < 10; i ++ ) {
+
+            randomPoints.push( new THREE.Vector3( ( i - 4.5 ) * 50, THREE.Math.randFloat( - 50, 50 ), THREE.Math.randFloat( - 50, 50 ) ) );
+
+        }
+
+        // 从一系列的点创建一条平滑的三维样条曲线。
+        let randomSpline = new THREE.CatmullRomCurve3( randomPoints );
+
+        // 设置 挤压形状的数据。
+//         上面的随机点集合 用在 挤压的数据设置 之中 。
+        let extrudeSettings2 = {
+
+            steps: 200,
+            bevelEnabled: true,
+            extrudePath: randomSpline
+
+        };
+
+//        从 点集合中 创建曲线。
+        let pts1 = [], numPts = 5;
+
+        for ( let i = 0; i < numPts * 2; i ++ ) {
+
+            let l = i % 2 == 1 ? 10 : 20;
+
+            let a = i / numPts * Math.PI;
+
+            pts1.push( new THREE.Vector2( Math.cos( a ) * l, Math.sin( a ) * l ) );
+
+        }
+
+        let shape2 = new THREE.Shape( pts1 );
+
+        let geometry2 = new THREE.ExtrudeBufferGeometry( shape2, extrudeSettings2 );
+
+        let materials2 = new THREE.MeshLambertMaterial( { color: 0xaa2200, wireframe: false } );
+
+        let mesh2 = new THREE.Mesh( geometry2, materials2 );
+
+        scene.add( mesh2 );
+
+
+        // 创建第三种路径。嵌套的形状。
+        let materials3 = [ material, materials2 ];
+
+        let extrudeSettings3 = {
+
+            depth: 20, // 设置要拉伸的长度。
+            steps: 1,
+            bevelEnabled: true,
+            bevelThickness: 2,
+            bevelSize: 4,  // 设置bevel 的厚度。
+            bevelSegments: 4
+
+        };
+
+
+        let geometry3 = new THREE.ExtrudeBufferGeometry( shape2, extrudeSettings3 );
+
+        let mesh3 = new THREE.Mesh( geometry3, materials3 );
+
+        mesh3.position.set( 50, 100, 50 );
+
+        scene.add( mesh3 );
+
+        // test
+//        let cube = new THREE.Mesh( new THREE.BoxGeometry( 100, 100, 100 ), new THREE.MeshBasicMaterial( { color: 0xff0000 } ) );
+//        scene.add( cube );
+
+    }
+
+    function animate() {
+
+        requestAnimationFrame( animate );
+
+        controls.update();
+//       渲染场景。
+        renderer.render( scene, camera );
+
+    }
+
+
+
+</script>
+</body>
+</html>
