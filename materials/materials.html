@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            color: #eee;
+            font-family: Monospace;
+            font-size: 13px;
+            text-align: center;
+
+            background-color: #000;
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+    </style>
+</head>
+<body>
+
+
+<script src="../build/three.js"></script>
+<script>
+    // Our Javascript will go here.
+
+//    定义变量
+    let camera, scene, renderer;
+    let pointLight;
+
+//    定义对象数组 和 材质数组。
+    let objects = [], materials = [];
+
+    init();
+    animate();
+    
+    function init() {
+
+//        创建相机
+        camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
+        camera.position.set( 0, 100, 600 );
+
+//        创建场景
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color( 0x333333 );
+
+//        创建二维网格
+        /*
+        let helper = new THREE.GridHelper( 1000, 40, 0x303030, 0x303030 );
+        helper.position.y = -75;
+        scene.add( helper );
+        */
+
+
+//        初始化多种材质
+        let texture = new THREE.Texture( generateTexture() );
+        texture.needsUpdate = true;
+
+        // 设置不同的材质。
+        // 经纬线的材质。
+//        let material = new THREE.MeshLambertMaterial( { map: texture, transparent: true } );
+        // 普通的非光泽表面。
+//        let material = new THREE.MeshLambertMaterial( { color: 0xdddddd } );
+        // 高光泽表面。 specular： 反光颜色，shininess: 光集中的程度， flatShading： 是否平铺， 圆形平面将会平压下去。
+//        let material = new THREE.MeshPhongMaterial( { color: 0xdddddd, specular: 0x009900, shininess: 30, flatShading: true } );
+        // 一个 多彩颜色的 材质， 将 法向量 映射到 RGB 了。
+//        let material =  new THREE.MeshNormalMaterial();
+        // 设置 基础网格材质， blending： 颜色进行调和。
+//        let material =  new THREE.MeshBasicMaterial( { color: 0xccaa00, transparent: true, blending: THREE.AdditiveBlending } );
+        // 高光泽表面。 添加了贴图内容。
+//        let material =  new THREE.MeshPhongMaterial( { color: 0xdddddd, specular: 0x009900, shininess: 30, map: texture, transparent: true } );
+        // 同样的， flatShading 设置的是 是否将 曲面按照 平面来 进行处理。
+//        let material =  new THREE.MeshNormalMaterial( { flatShading: true } );
+        // 定义 基础网格材质。 wireframe：true  只显示线框框架。
+//        let material = new THREE.MeshBasicMaterial( { color: 0xffaa00, wireframe: true } );
+        // 定义 深度网格材质。
+//        let material = new THREE.MeshDepthMaterial();
+        // 定义 非光泽 表面网格材质， emissive： 发射出来的颜色。
+        // 这如同 太阳一样， 或者是 烧红的铁球 一般。
+//          let material = new THREE.MeshLambertMaterial( { color: 0x666666, emissive: 0xff0000 } );
+        // 定义光泽表面材质。
+//        let material = new THREE.MeshPhongMaterial( { color: 0x000000, specular: 0x666666, emissive: 0xff0000, shininess: 10, opacity: 0.9, transparent: true } );
+
+        // 定义基础网格材质， 使用给定的材质。
+//        let material = new THREE.MeshBasicMaterial( { map: texture, transparent: true } ) ;
+
+//        创建球体结构
+        let geometry = new THREE.SphereGeometry( 70, 32, 16 );
+
+        for ( let i = 0, l = geometry.faces.length; i < l; i ++ ) {
+
+            let face = geometry.faces[ i ];
+            face.materialIndex = Math.floor( Math.random() * materials.length );
+
+        }
+
+        geometry.sortFacesByMaterialIndex();
+
+
+        let mesh = new THREE.Mesh( geometry, material );
+
+        scene.add( mesh );
+
+//        添加 环境光 和 平行光。
+        scene.add( new THREE.AmbientLight( 0x111111 ) );
+
+        scene.add( new THREE.DirectionalLight( 0xffffff, 0.9 ) );
+
+//        创建渲染器。
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+
+        // test
+//        let geometry = new THREE.SphereGeometry( 70, 32, 16 );
+//
+//        console.log( geometry.faces );
+
+    }
+
+    /* 生成 材质 */
+    function generateTexture() {
+
+        let canvas = document.createElement( 'canvas' );
+        canvas.width = 256;
+        canvas.height = 256;
+
+        let context = canvas.getContext( '2d' ) ;
+        let image = context.getImageData( 0, 0, 256, 256 );
+
+        let x = 0, y = 0;
+
+        // 将 canvas 的数据转换为 image 数据进行处理。
+        for ( let i = 0, j = 0, l = image.data.length; i < l; i += 4, j ++ ) {
+
+            x = j % 256;
+            y = x == 0 ? y + 1 : y;
+
+            // 都设置成 白色，但亮度 不一定。
+            image.data[ i ] = 255;
+            image.data[ i + 1 ] = 255;
+            image.data[ i + 2 ] = 255;
+            image.data[ i + 3 ] = Math.floor( x ^ y );
+
+        }
+
+        // 将 image data 数据再次放进 canvas 之中。
+        context.putImageData( image, 0, 0 );
+
+        return canvas;
+
+    }
+
+
+    function animate() {
+
+        requestAnimationFrame(animate);
+        render();
+
+    }
+
+    /* 进行渲染对象 */
+    function render() {
+
+        renderer.render( scene, camera );
+
+    }
+
+</script>
+</body>
+</html>
+
+
+
+
+
+
