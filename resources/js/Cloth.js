@@ -48,7 +48,11 @@ function plane( width, height ) {
 
 	return function ( u, v, target ) {
 
-		var x = ( u - 0.5 ) * width;
+		// 貌似是通过 uv 调节， 使得外部的option 能够对应到正确的位置上。
+		// 即， 在 0，0 的位置上， 该素材能够达到想要位置。
+		// var x = ( u - 0.5 ) * width;
+		var x = ( u -0.5 ) * width;
+		// var y = ( v + 0.5 ) * height;
 		var y = ( v + 0.5 ) * height;
 		var z = 0;
 
@@ -71,6 +75,7 @@ function Particle( x, y, z, mass ) {
 
 	// init
 
+	// 这里会重新设置目标位置
 	clothFunction( x, y, this.position ); // position
 	clothFunction( x, y, this.previous ); // previous
 	clothFunction( x, y, this.original );
