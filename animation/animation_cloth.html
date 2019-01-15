@@ -155,6 +155,15 @@
     
     function animate() {
 
+        // 想要理解 动画的原理， 要从三个方面进行入手
+        // 1.语言语义。
+        // 2.使用的算法和数据结构。
+        // 3.开放的抽象接口操作的具体含义，和 约定语义等等。
+
+        // 生成 Cloth modeling 的算法参考 wikipidia：
+        // https://en.wikipedia.org/wiki/Cloth_modeling
+        //
+
         requestAnimationFrame( animate );
         render();
 
